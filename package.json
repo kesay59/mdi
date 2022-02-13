@@ -4,7 +4,9 @@
   "private": true,
   "main": "./dist/mdi.common.js",
   "scripts": {
-    "build": "vue-cli-service build --target lib --name mdi-vue3 src/main.js"
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build --target lib --name mdi src/main.js",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "core-js": "^3.6.5",
