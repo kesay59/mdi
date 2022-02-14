@@ -1,27 +1,38 @@
 <template>
-    <div ref="place" :style="{ width: width, height: height, outline: '1px solid red' }">asdf</div>
+    <div ref="place" :style="{ width: placeWidth, height: placeHeight, outline: '1px solid green' }">
+        place
+        <document-list :width="documentWidth" :height="documentHeight"></document-list>
+    </div>
 </template>
 <script setup>
-import { defineProps, ref, computed, onMounted } from 'vue';
+import { defineProps, ref, computed, onBeforeMount, onBeforeUpdate } from 'vue';
+
+import DocumentList from './document/List.vue';
 
 const props = defineProps({
     width: Number,
     height: Number,
 });
-console.log(props);
 
-const width = computed({
-    get: () => {
-        console.log(props.width);
-        return props.width != null ? props.width + 'px' : '100%';
-    },
+const placeWidth = computed({
+    get: () => (props.width != null ? props.width + 'px' : '100%'),
 });
-console.log(width.value);
-const height = computed({
+const placeHeight = computed({
     get: () => (props.height != null ? props.height + 'px' : '100%'),
 });
+
 const place = ref(null);
-onMounted(() => {
-    console.log(place.value);
+const documentWidth = ref(0);
+const documentHeight = ref(0);
+const setDocumentSize = function () {
+    documentWidth.value = place.value == null ? 0 : place.value.offsetWidth;
+    documentHeight.value = place.value == null ? 0 : place.value.offsetHeight;
+};
+
+onBeforeMount(() => {
+    setDocumentSize();
+});
+onBeforeUpdate(() => {
+    setDocumentSize();
 });
 </script>
