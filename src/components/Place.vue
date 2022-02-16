@@ -1,11 +1,10 @@
 <template>
     <div ref="place" :style="{ width: placeWidth, height: placeHeight, outline: '1px solid green' }">
-        place
-        <document-list :width="documentWidth" :height="documentHeight"></document-list>
+        <document-list :limitRect="limitRect"></document-list>
     </div>
 </template>
 <script setup>
-import { defineProps, ref, computed, onBeforeMount, onBeforeUpdate } from 'vue';
+import { defineProps, ref, computed, onMounted, onUpdated } from 'vue';
 
 import DocumentList from './document/List.vue';
 
@@ -22,17 +21,17 @@ const placeHeight = computed({
 });
 
 const place = ref(null);
-const documentWidth = ref(0);
-const documentHeight = ref(0);
+
+const limitRect = ref({ width: 0, height: 0 });
 const setDocumentSize = function () {
-    documentWidth.value = place.value == null ? 0 : place.value.offsetWidth;
-    documentHeight.value = place.value == null ? 0 : place.value.offsetHeight;
+    limitRect.value.width = place.value == null ? 0 : place.value.offsetWidth;
+    limitRect.value.height = place.value == null ? 0 : place.value.offsetHeight;
 };
 
-onBeforeMount(() => {
+onMounted(() => {
     setDocumentSize();
 });
-onBeforeUpdate(() => {
+onUpdated(() => {
     setDocumentSize();
 });
 </script>
