@@ -22,10 +22,14 @@ const orderGen = generateOrder(0, 2147483647);
 class Document {
     #index;
     #order;
-    constructor(index, title, param, size, maxSize, minSize) {
+    #contentFn;
+    constructor(index, title, contentFn, param, size, maxSize, minSize) {
         this.#index = index;
         this.#order = orderGen.next().value;
         this.title = title != null ? title : '';
+        if (contentFn != null && (typeof contentFn === 'object' || typeof contentFn === 'function') && typeof contentFn.then === 'function') this.#contentFn = contentFn;
+        else throw 'The type of contentFn must be Promise.';
+        this.content = null;
         if (param == null) this.param = {};
         else if (typeof param != 'object') throw 'The type of param must be object.';
         else this.param = param;
@@ -106,6 +110,7 @@ const documentApi = {
     list: documentList,
 };
 onMounted(() => {
+    console.log(import('./Frame.vue'));
     emit('ready', documentApi);
 });
 </script>
