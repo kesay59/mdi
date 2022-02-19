@@ -110,7 +110,7 @@ const documentApi = {
     list: documentList,
 };
 onMounted(() => {
-    console.log(import('./Frame.vue'));
+    // console.log(import('./Frame.vue'));
     emit('ready', documentApi);
 });
 </script>
