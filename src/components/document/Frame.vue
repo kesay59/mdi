@@ -1,11 +1,22 @@
 <template>
-    <div></div>
+    <div class="document-frame" :style="{ width: props.document.width, height: props.document.height, top: position.top + 'px', left: position.left + 'px' }">
+        <contents :document="props.document"></contents>
+    </div>
 </template>
 <script setup>
-// import { defineProps } from 'vue';
+import { defineProps, ref } from 'vue';
 
-// const props = defineProps({
-//     width: Number,
-//     height: Number,
-// });
+import Contents from './Contents.vue';
+
+const props = defineProps({
+    document: Object,
+});
+console.log(props.document);
+const position = ref({ top: 0, left: 0 });
 </script>
+<style lang="css" scoped>
+.document-frame {
+    background-color: white;
+    position: absolute;
+}
+</style>

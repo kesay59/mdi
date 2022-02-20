@@ -10,7 +10,7 @@
 
 <script>
 import { ref } from 'vue';
-import Mdi from './components/Place';
+import Mdi from '@/components/Place';
 
 export default {
     name: 'App',

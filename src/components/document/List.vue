@@ -1,14 +1,18 @@
 <template>
     <div :style="{ width: props.limitRect.width, height: props.limitRect.height }">
-        <template v-for="(document, idx) in documentList" :key="idx"></template>
-        <input type="button" text="open" value="open" @click="openDocument()" />
+        <template v-for="(document, idx) in documentList" :key="idx">
+            <frame :document="document" v-if="document != null"></frame>
+        </template>
+        <input type="button" text="open" value="open" @click="openDocument('title', import('@/CompTest.vue'), {})" />
         <input type="button" text="close" value="close" @click="closeDocument(0)" />
         <input type="button" text="closeAll" value="closeAll" @click="closeDocumentAll()" />
         <input type="button" text="test" value="test" @click="test()" />
     </div>
 </template>
 <script setup>
-import { defineProps, defineEmits, onMounted } from 'vue';
+import { defineProps, defineEmits, ref, onMounted } from 'vue';
+
+import Frame from './Frame.vue';
 
 const props = defineProps({
     limitRect: Object,
@@ -22,39 +26,36 @@ const orderGen = generateOrder(0, 2147483647);
 class Document {
     #index;
     #order;
-    #contentFn;
-    constructor(index, title, contentFn, param, size, maxSize, minSize) {
+    #contentsFn;
+    constructor(index, title, contentsFn, param, size, maxSize, minSize) {
         this.#index = index;
         this.#order = orderGen.next().value;
         this.title = title != null ? title : '';
-        if (contentFn != null && (typeof contentFn === 'object' || typeof contentFn === 'function') && typeof contentFn.then === 'function') this.#contentFn = contentFn;
+        if (contentsFn != null && (typeof contentsFn === 'object' || typeof contentsFn === 'function') && typeof contentsFn.then === 'function') this.#contentsFn = contentsFn;
         else throw 'The type of contentFn must be Promise.';
-        this.content = null;
+        this.contents = null;
         if (param == null) this.param = {};
         else if (typeof param != 'object') throw 'The type of param must be object.';
         else this.param = param;
         this.iconize = false;
         this.maximize = false;
 
-        if (maxSize == null) this.maxSize = { width: props.limitRect.width, height: props.limitRect.height };
+        if (maxSize == null) maxSize = { width: props.limitRect.width, height: props.limitRect.height };
         else if (typeof maxSize != 'object') throw 'The type of maxSize must be object.';
-        else this.maxSize = maxSize;
         this.maxSize = {
             width: maxSize.width != null ? maxSize.width : props.limitRect.width,
             height: maxSize.height != null ? maxSize.height : props.limitRect.height,
         };
 
-        if (minSize == null) this.minSize = { width: 0, height: 0 };
+        if (minSize == null) minSize = { width: 0, height: 0 };
         else if (typeof minSize != 'object') throw 'The type of minSize must be object.';
-        else this.minSize = minSize;
         this.minSize = {
             width: minSize.width != null ? minSize.width : 0,
             height: minSize.height != null ? minSize.height : 0,
         };
 
-        if (size == null) this.size = { width: maxSize.width, height: maxSize.height };
+        if (size == null) size = { width: maxSize.width, height: maxSize.height };
         else if (typeof size != 'object') throw 'The type of size must be object.';
-        else this.size = size;
         this.size = {
             width: size.width != null ? size.width : maxSize.width,
             height: size.height != null ? size.height : maxSize.height,
@@ -71,34 +72,37 @@ class Document {
     increaseOrder() {
         this.#order = orderGen.next().value;
     }
+    get contentsFn() {
+        return this.#contentsFn;
+    }
 }
 
 const DOCUMENT_MAXIMUM_NUMBER = 12;
-const documentList = new Array(DOCUMENT_MAXIMUM_NUMBER);
-documentList.fill(null);
+const documentList = ref(new Array(DOCUMENT_MAXIMUM_NUMBER));
+documentList.value.fill(null);
 
-const openDocument = function (title, param, size, maxSize, minSize) {
+const openDocument = function (title, contentsFn, param, size, maxSize, minSize) {
     var targetIndex = 0;
-    for (var idx = 0; idx < documentList.length; idx++) {
-        if (documentList[idx] == null) {
+    for (var idx = 0; idx < documentList.value.length; idx++) {
+        if (documentList.value[idx] == null) {
             targetIndex = idx;
             break;
         } else {
-            if (documentList[targetIndex].order > documentList[idx].order) targetIndex = idx;
+            if (documentList.value[targetIndex].order > documentList.value[idx].order) targetIndex = idx;
         }
     }
-    const document = new Document(targetIndex, title, param, size, maxSize, minSize);
-    documentList[targetIndex] = document;
+    const document = new Document(targetIndex, title, contentsFn, param, size, maxSize, minSize);
+    documentList.value[targetIndex] = document;
     return document;
 };
 const closeDocument = function (index) {
-    documentList[index] = null;
+    documentList.value[index] = null;
 };
 const closeDocumentAll = function () {
-    documentList.fill(null);
+    documentList.value.fill(null);
 };
 const test = function () {
-    console.log(documentList);
+    console.log(documentList.value);
 };
 
 const documentApi = {
@@ -107,7 +111,7 @@ const documentApi = {
         close: closeDocument,
         closeAll: closeDocumentAll,
     },
-    list: documentList,
+    list: documentList.value,
 };
 onMounted(() => {
     // console.log(import('./Frame.vue'));
