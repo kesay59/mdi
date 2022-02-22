@@ -24,14 +24,15 @@ function* generateOrder(start, end) {
 }
 const orderGen = generateOrder(0, 2147483647);
 class Document {
-    #index;
-    #order;
-    #contentsFn;
+    // #field = { index: 0, order: 0, contentsFn: function () {} };
+    index = Symbol('INDEX');
+    order = Symbol('ORDER');
+    contentsFn = Symbol('CONTENT_FN');
     constructor(index, title, contentsFn, param, size, maxSize, minSize) {
-        this.#index = index;
-        this.#order = orderGen.next().value;
+        this[index] = Symbol();
+        this[order] = orderGen.next().value;
         this.title = title != null ? title : '';
-        if (contentsFn != null && (typeof contentsFn === 'object' || typeof contentsFn === 'function') && typeof contentsFn.then === 'function') this.#contentsFn = contentsFn;
+        if (contentsFn != null && (typeof contentsFn === 'object' || typeof contentsFn === 'function') && typeof contentsFn.then === 'function') this[contentsFn] = contentsFn;
         else throw 'The type of contentFn must be Promise.';
         this.contents = null;
         if (param == null) this.param = {};
@@ -63,6 +64,20 @@ class Document {
         if (this.minSize.width > this.maxSize.width || this.minSize.height > this.maxSize.height) throw 'The maximum size must be larger than the minimum size.';
     }
 
+    // index = new Proxy(this.#field, {
+    //     get(target, prop, receiver) {
+    //         return target.index;
+    //         // return Reflect.get(...arguments);
+    //     },
+    // });
+
+    // getCotentsFn = new Proxy(this.#field, {
+    //     get(target, prop, receiver) {
+    //         return target.contentsFn;
+    //         // return Reflect.get(...arguments);
+    //     },
+    // });
+
     get index() {
         return this.#index;
     }
@@ -72,8 +87,10 @@ class Document {
     increaseOrder() {
         this.#order = orderGen.next().value;
     }
-    get contentsFn() {
-        return this.#contentsFn;
+    getContentsFnn() {
+        // console.log(this);
+        return _.cloneDeep(this.#contentsFn);
+        // return null;
     }
 }
 
