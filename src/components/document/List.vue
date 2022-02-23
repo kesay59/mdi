@@ -23,76 +23,61 @@ function* generateOrder(start, end) {
     for (let i = start; i <= end; i++) yield i;
 }
 const orderGen = generateOrder(0, 2147483647);
-class Document {
-    // #field = { index: 0, order: 0, contentsFn: function () {} };
-    index = Symbol('INDEX');
-    order = Symbol('ORDER');
-    contentsFn = Symbol('CONTENT_FN');
-    constructor(index, title, contentsFn, param, size, maxSize, minSize) {
-        this[index] = Symbol();
-        this[order] = orderGen.next().value;
-        this.title = title != null ? title : '';
-        if (contentsFn != null && (typeof contentsFn === 'object' || typeof contentsFn === 'function') && typeof contentsFn.then === 'function') this[contentsFn] = contentsFn;
-        else throw 'The type of contentFn must be Promise.';
-        this.contents = null;
-        if (param == null) this.param = {};
-        else if (typeof param != 'object') throw 'The type of param must be object.';
-        else this.param = param;
-        this.iconize = false;
-        this.maximize = false;
+const Document = (() => {
+    let indexSymbol = Symbol('INDEX');
+    let orderSymbol = Symbol('ORDER');
+    let contentsFnSymobl = Symbol('CONTENT_FN');
+    return class {
+        constructor(index, title, contentsFn, param, size, maxSize, minSize) {
+            this[indexSymbol] = index;
+            this[orderSymbol] = orderGen.next().value;
+            this.title = title != null ? title : '';
+            if (contentsFn != null && (typeof contentsFn === 'object' || typeof contentsFn === 'function') && typeof contentsFn.then === 'function') this[contentsFnSymobl] = contentsFn;
+            else throw 'The type of contentFn must be Promise.';
+            this.contents = null;
+            if (param == null) this.param = {};
+            else if (typeof param != 'object') throw 'The type of param must be object.';
+            else this.param = param;
+            this.iconize = false;
+            this.maximize = false;
 
-        if (maxSize == null) maxSize = { width: props.limitRect.width, height: props.limitRect.height };
-        else if (typeof maxSize != 'object') throw 'The type of maxSize must be object.';
-        this.maxSize = {
-            width: maxSize.width != null ? maxSize.width : props.limitRect.width,
-            height: maxSize.height != null ? maxSize.height : props.limitRect.height,
-        };
+            if (maxSize == null) maxSize = { width: props.limitRect.width, height: props.limitRect.height };
+            else if (typeof maxSize != 'object') throw 'The type of maxSize must be object.';
+            this.maxSize = {
+                width: maxSize.width != null ? maxSize.width : props.limitRect.width,
+                height: maxSize.height != null ? maxSize.height : props.limitRect.height,
+            };
 
-        if (minSize == null) minSize = { width: 0, height: 0 };
-        else if (typeof minSize != 'object') throw 'The type of minSize must be object.';
-        this.minSize = {
-            width: minSize.width != null ? minSize.width : 0,
-            height: minSize.height != null ? minSize.height : 0,
-        };
+            if (minSize == null) minSize = { width: 0, height: 0 };
+            else if (typeof minSize != 'object') throw 'The type of minSize must be object.';
+            this.minSize = {
+                width: minSize.width != null ? minSize.width : 0,
+                height: minSize.height != null ? minSize.height : 0,
+            };
 
-        if (size == null) size = { width: maxSize.width, height: maxSize.height };
-        else if (typeof size != 'object') throw 'The type of size must be object.';
-        this.size = {
-            width: size.width != null ? size.width : maxSize.width,
-            height: size.height != null ? size.height : maxSize.height,
-        };
-        if (this.minSize.width > this.maxSize.width || this.minSize.height > this.maxSize.height) throw 'The maximum size must be larger than the minimum size.';
-    }
+            if (size == null) size = { width: maxSize.width, height: maxSize.height };
+            else if (typeof size != 'object') throw 'The type of size must be object.';
+            this.size = {
+                width: size.width != null ? size.width : maxSize.width,
+                height: size.height != null ? size.height : maxSize.height,
+            };
+            if (this.minSize.width > this.maxSize.width || this.minSize.height > this.maxSize.height) throw 'The maximum size must be larger than the minimum size.';
+        }
 
-    // index = new Proxy(this.#field, {
-    //     get(target, prop, receiver) {
-    //         return target.index;
-    //         // return Reflect.get(...arguments);
-    //     },
-    // });
-
-    // getCotentsFn = new Proxy(this.#field, {
-    //     get(target, prop, receiver) {
-    //         return target.contentsFn;
-    //         // return Reflect.get(...arguments);
-    //     },
-    // });
-
-    get index() {
-        return this.#index;
-    }
-    get order() {
-        return this.#order;
-    }
-    increaseOrder() {
-        this.#order = orderGen.next().value;
-    }
-    getContentsFnn() {
-        // console.log(this);
-        return _.cloneDeep(this.#contentsFn);
-        // return null;
-    }
-}
+        get index() {
+            return this[indexSymbol];
+        }
+        get order() {
+            return this[orderSymbol];
+        }
+        increaseOrder() {
+            this[order] = orderGen.next().value;
+        }
+        get contentsFn() {
+            return this[contentsFnSymobl];
+        }
+    };
+})();
 
 const DOCUMENT_MAXIMUM_NUMBER = 12;
 const documentList = ref(new Array(DOCUMENT_MAXIMUM_NUMBER));
@@ -110,6 +95,7 @@ const openDocument = function (title, contentsFn, param, size, maxSize, minSize)
     }
     const document = new Document(targetIndex, title, contentsFn, param, size, maxSize, minSize);
     documentList.value[targetIndex] = document;
+    console.log(document.index);
     return document;
 };
 const closeDocument = function (index) {

@@ -1,10 +1,11 @@
 <template>
-    <div ref="place" :style="{ width: placeWidth, height: placeHeight, outline: '1px solid green' }">
+    <div ref="place" :style="{ width: placeWidth, height: placeHeight, outline: '1px solid green', position: 'relative' }">
         <document-list :limitRect="limitRect" @ready="handleReady"></document-list>
     </div>
 </template>
 <script setup>
 import { defineProps, defineEmits, ref, computed, onMounted, onUpdated } from 'vue';
+import _ from 'lodash';
 
 import DocumentList from './document/List.vue';
 
