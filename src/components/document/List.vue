@@ -3,7 +3,7 @@
         <template v-for="(document, idx) in documentList" :key="idx">
             <frame :document="document" v-if="document != null"></frame>
         </template>
-        <input type="button" text="open" value="open" @click="openDocument('title', import('@/CompTest.vue'), {})" />
+        <input type="button" text="open" value="open" @click="openDocument('title', import('@/CompTest.vue'), {}, { width: 100, height: 100 })" />
         <input type="button" text="close" value="close" @click="closeDocument(0)" />
         <input type="button" text="closeAll" value="closeAll" @click="closeDocumentAll()" />
         <input type="button" text="test" value="test" @click="test()" />
@@ -28,40 +28,16 @@ const Document = (() => {
     let orderSymbol = Symbol('ORDER');
     let contentsFnSymobl = Symbol('CONTENT_FN');
     return class {
-        constructor(index, title, contentsFn, param, size, maxSize, minSize) {
+        constructor(index, title, contentsFn, param, size) {
             this[indexSymbol] = index;
             this[orderSymbol] = orderGen.next().value;
-            this.title = title != null ? title : '';
-            if (contentsFn != null && (typeof contentsFn === 'object' || typeof contentsFn === 'function') && typeof contentsFn.then === 'function') this[contentsFnSymobl] = contentsFn;
-            else throw 'The type of contentFn must be Promise.';
+            this.title = title;
+            this[contentsFnSymobl] = contentsFn;
+            this.param = param;
+            this.size = size;
             this.contents = null;
-            if (param == null) this.param = {};
-            else if (typeof param != 'object') throw 'The type of param must be object.';
-            else this.param = param;
             this.iconize = false;
             this.maximize = false;
-
-            if (maxSize == null) maxSize = { width: props.limitRect.width, height: props.limitRect.height };
-            else if (typeof maxSize != 'object') throw 'The type of maxSize must be object.';
-            this.maxSize = {
-                width: maxSize.width != null ? maxSize.width : props.limitRect.width,
-                height: maxSize.height != null ? maxSize.height : props.limitRect.height,
-            };
-
-            if (minSize == null) minSize = { width: 0, height: 0 };
-            else if (typeof minSize != 'object') throw 'The type of minSize must be object.';
-            this.minSize = {
-                width: minSize.width != null ? minSize.width : 0,
-                height: minSize.height != null ? minSize.height : 0,
-            };
-
-            if (size == null) size = { width: maxSize.width, height: maxSize.height };
-            else if (typeof size != 'object') throw 'The type of size must be object.';
-            this.size = {
-                width: size.width != null ? size.width : maxSize.width,
-                height: size.height != null ? size.height : maxSize.height,
-            };
-            if (this.minSize.width > this.maxSize.width || this.minSize.height > this.maxSize.height) throw 'The maximum size must be larger than the minimum size.';
         }
 
         get index() {
@@ -83,7 +59,58 @@ const DOCUMENT_MAXIMUM_NUMBER = 12;
 const documentList = ref(new Array(DOCUMENT_MAXIMUM_NUMBER));
 documentList.value.fill(null);
 
-const openDocument = function (title, contentsFn, param, size, maxSize, minSize) {
+const validateTitle = function (title) {
+    return title != null ? title : '';
+};
+const validateContentsFn = function (contentsFn) {
+    if (contentsFn == null || (typeof contentsFn != 'object' && typeof contentsFn != 'function') || typeof contentsFn.then != 'function') {
+        throw 'The type of contentFn must be Promise.';
+    } else {
+        return contentFn;
+    }
+};
+const validateParam = function (param) {
+    if (param == null) return {};
+    else if (typeof param != 'object') throw 'The type of param must be object.';
+    else return param;
+};
+const validateSize = function (size) {
+    if (size.max == null) size.max = {};
+    else if (typeof size.max != 'object') throw 'The type of size.max must be object.';
+    size.max = {
+        width: size.max.width != null ? size.max.width : props.limitRect.width,
+        height: size.max.height != null ? size.max.height : props.limitRect.height,
+    };
+
+    if (size.min == null) size.min = {};
+    else if (typeof size.min != 'object') throw 'The type of size.min must be object.';
+    size.min = {
+        width: size.min.width != null ? size.min.width : 100,
+        height: size.min.height != null ? size.min.height : 100,
+    };
+
+    if (size.current == null) size.current = {};
+    else if (typeof size.current != 'object') throw 'The type of size.current must be object.';
+    size.current = {
+        width: size.current.width != null ? size.current.width : size.min.width,
+        height: size.current.height != null ? size.current.height : size.min.height,
+    };
+
+    if (size.max.height < size.min.height || size.max.width < size.max.width) throw 'height/width of size.max must be bigger then that of size.min';
+    // if (size.max.height < size.current.height || size.max.width < size.current.width) throw 'height/width of size.max must be bigger then that of size.current';
+
+    return size;
+};
+
+/**
+ * @param {string} title
+ * @param {function(promise)} contentsFn
+ * @param {object} param
+ * @param {object} size
+ * @return {class(Document)}
+ * @code openDocument("title", import("src/Example.vue"), {}, {current: {width: 300, height: 300}, min: {width: 100, height: 100}, max: {width: 500, height: 500}})
+ */
+const openDocument = function (title, contentsFn, param, size) {
     var targetIndex = 0;
     for (var idx = 0; idx < documentList.value.length; idx++) {
         if (documentList.value[idx] == null) {
@@ -93,9 +120,8 @@ const openDocument = function (title, contentsFn, param, size, maxSize, minSize)
             if (documentList.value[targetIndex].order > documentList.value[idx].order) targetIndex = idx;
         }
     }
-    const document = new Document(targetIndex, title, contentsFn, param, size, maxSize, minSize);
+    const document = new Document(targetIndex, validateTitle(title), validateContentsFn(contentsFn), validateParam(param), validateSize(size));
     documentList.value[targetIndex] = document;
-    console.log(document.index);
     return document;
 };
 const closeDocument = function (index) {

@@ -1,5 +1,5 @@
 <template>
-    <div class="document-frame" :style="{ width: props.document.width, height: props.document.height, top: position.top + 'px', left: position.left + 'px' }">
+    <div class="document-frame" :style="{ width: props.document.size.width + 'px', height: props.document.size.height + 'px', top: position.top + 'px', left: position.left + 'px' }">
         <contents :document="props.document"></contents>
     </div>
 </template>
