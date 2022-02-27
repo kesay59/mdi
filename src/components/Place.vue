@@ -1,27 +1,27 @@
 <template>
-    <div ref="place" :style="{ width: width, height: height, outline: '1px solid red' }">asdf</div>
+    <div style="width: 100%; height: 100%">
+        <!-- <component :is="DocumentList" @ready="handleReady"></component> -->
+        <document-list @ready="handleReady"></document-list>
+    </div>
 </template>
-<script setup>
-import { defineProps, ref, computed, onMounted } from 'vue';
+<script>
+import DocumentList from './document/List.vue';
 
-const props = defineProps({
-    width: Number,
-    height: Number,
-});
-console.log(props);
-
-const width = computed({
-    get: () => {
-        console.log(props.width);
-        return props.width != null ? props.width + 'px' : '100%';
+export default {
+    components: {
+        DocumentList,
     },
-});
-console.log(width.value);
-const height = computed({
-    get: () => (props.height != null ? props.height + 'px' : '100%'),
-});
-const place = ref(null);
-onMounted(() => {
-    console.log(place.value);
-});
+    emits: ['ready'],
+    setup(props, { emit }) {
+        console.log('place : start');
+        const handleReady = function (documentApi) {
+            console.log('place : ready');
+            emit('ready', documentApi);
+        };
+        return {
+            handleReady,
+            DocumentList,
+        };
+    },
+};
 </script>

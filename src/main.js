@@ -1,5 +1,5 @@
-import Test from './components/Place.vue'
-export default Test
+import Mdi from './components/Place.vue'
+export default Mdi
 
 import { createApp } from 'vue'
 import App from './App.vue'
