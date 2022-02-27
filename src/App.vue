@@ -4,13 +4,14 @@
         <input type="button" @click="changeSize(1200, 800)" value="big" />
     </div>
     <div style="border: 1px solid black" :style="{ width: width + 'px', height: height + 'px' }">
-        <mdi ref="mdi" :width="width - 100" :height="height - 100" />
+        <mdi @ready="test" />
     </div>
 </template>
 
 <script>
 import { ref } from 'vue';
-import Mdi from '@/components/Place';
+import Mdi from '@/components/Place.vue';
+// import Mdi from '@/components/document/List.vue';
 
 export default {
     name: 'App',
@@ -28,6 +29,11 @@ export default {
             changeSize: function (w, h) {
                 width.value = w;
                 height.value = h;
+            },
+            test: function (e) {
+                console.log(e);
+                e.method.open({ title: 'title', contentsFn: import('@/page/Test.vue'), data: {}, size: { current: { width: 200, height: 100 } }, fixedContents: true });
+                console.log(e.list);
             },
         };
     },
