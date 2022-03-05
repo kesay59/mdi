@@ -1,10 +1,3 @@
-<template>
-    <div class="limit-rect">
-        <template v-for="(document, idx) in documentList" :key="idx">
-            <frame :document="document" :isTop="topIndex == idx" v-if="document != null" v-show="!document.iconize"></frame>
-        </template>
-    </div>
-</template>
 <script>
 import { ref, computed } from 'vue';
 
@@ -184,10 +177,11 @@ export default {
     },
 };
 </script>
-<style scoped>
-.limit-rect {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-</style>
+
+<template>
+    <div class="limit-rect" style="width: 100%; height: 100%; position: relative">
+        <template v-for="(document, idx) in documentList" :key="idx">
+            <frame :document="document" :isTop="topIndex == idx" v-if="document != null" v-show="!document.iconize"></frame>
+        </template>
+    </div>
+</template>

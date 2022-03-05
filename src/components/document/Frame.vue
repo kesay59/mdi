@@ -42,7 +42,7 @@ export default {
         const documentFrame = ref(null);
 
         onMounted(() => {
-            const dragController = interact(dragField);
+            const dragController = interact(dragField.value);
             dragController.draggable({
                 listeners: {
                     move(event) {
@@ -101,7 +101,7 @@ export default {
     },
 };
 </script>
-<style lang="css" scoped>
+<style>
 .document-frame {
     background-color: white;
     position: absolute;

@@ -1,10 +1,5 @@
-<template>
-    <div style="width: 100%; height: 100%">
-        <!-- <component :is="DocumentList" @ready="handleReady"></component> -->
-        <document-list @ready="handleReady"></document-list>
-    </div>
-</template>
 <script>
+import { h } from 'vue';
 import DocumentList from './document/List.vue';
 
 export default {
@@ -18,10 +13,7 @@ export default {
             console.log('place : ready');
             emit('ready', documentApi);
         };
-        return {
-            handleReady,
-            DocumentList,
-        };
+        return () => h('div', { style: { width: '100%', height: '100%' } }, [h(DocumentList, { onReady: handleReady })]);
     },
 };
 </script>
