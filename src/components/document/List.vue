@@ -4,6 +4,9 @@ import { ref, computed } from 'vue';
 import Frame from './Frame.vue';
 
 export default {
+    props: {
+        maximumNumber: Number,
+    },
     components: {
         Frame,
     },
@@ -61,7 +64,7 @@ export default {
             };
         })();
 
-        const DOCUMENT_MAXIMUM_NUMBER = 12;
+        const DOCUMENT_MAXIMUM_NUMBER = !props.maximumNumber || props.maximumNumber <= 0 ? 12 : props.maximumNumber;
         const documentList = ref(new Array(DOCUMENT_MAXIMUM_NUMBER));
         documentList.value.fill(null);
 
