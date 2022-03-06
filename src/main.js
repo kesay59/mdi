@@ -1,5 +1,5 @@
-import Mdi from './components/Place.vue'
-export default Mdi
+import MultipleDocument from './components/Place.vue'
+export default MultipleDocument
 
 // import { createApp } from 'vue'
 // import App from './App.vue'
