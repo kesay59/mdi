@@ -1,6 +1,6 @@
 <template>
     <div style="width: 100%; height: 100%; overflow: auto">
-        <inner-contents :document="document"></inner-contents>
+        <component :is="innerContents"></component>
     </div>
 </template>
 <script>
@@ -12,8 +12,6 @@ export default {
         document: Object,
     },
     setup(props) {
-        console.log('Inside : start');
-        console.log(props);
         const innerContents = defineAsyncComponent({
             loader: () => props.document.contentsFn,
             delay: 200,
@@ -21,7 +19,8 @@ export default {
             error: ErrorContents,
         });
         return {
-            components: [{ name: 'InnerContents', instance: innerContents }],
+            print,
+            innerContents,
         };
     },
 };

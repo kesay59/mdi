@@ -7,10 +7,8 @@ export default {
     components: {
         Frame,
     },
-    emits: ['ready'],
+    emits: ['readyApi'],
     setup(props, { emit }) {
-        console.log('list : start');
-
         function* generateOrder(start, end) {
             for (let i = start; i <= end; i++) yield i;
         }
@@ -50,9 +48,11 @@ export default {
                     return this[fixedContentsSymbol];
                 }
                 toggleMaximize() {
+                    this.increaseOrder();
                     this.maximize = !this.maximize;
                 }
                 toggleIconize() {
+                    this.increaseOrder();
                     this.iconize = !this.iconize;
                 }
                 close() {
@@ -168,8 +168,7 @@ export default {
             },
             list: documentList.value,
         };
-        console.log('list : ready');
-        emit('ready', documentApi);
+        emit('readyApi', documentApi);
         return {
             documentList,
             topIndex,

@@ -8,6 +8,9 @@
             top: position.top + 'px',
             left: position.left + 'px',
             zIndex: document.order,
+            backgroundColor: 'white',
+            position: 'absolute',
+            border: '1px solid black',
         }"
     >
         <toolbar :document="document" :isTop="isTop">
@@ -101,10 +104,3 @@ export default {
     },
 };
 </script>
-<style>
-.document-frame {
-    background-color: white;
-    position: absolute;
-    border: 1px solid black;
-}
-</style>
