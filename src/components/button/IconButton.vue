@@ -1,9 +1,9 @@
 <template>
-    <div class="icon-button">
+    <div class="icon-button" style="display: inline-block; cursor: pointer; overflow: hidden; position: relative; width: 24px; height: 24px; text-align: center">
         <slot></slot>
     </div>
 </template>
-<style scoped>
+<style>
 .icon-button {
     display: inline-block;
     cursor: pointer;

@@ -1,16 +1,25 @@
 {
-  "name": "mdi-vue3",
-  "version": "0.1.0",
-  "private": true,
-  "main": "./dist/mdi.common.js",
+  "name": "multiple-document-vue3",
+  "version": "0.1.7",
+  "license": "MIT",
+  "author": {
+    "name": "Keonsang Yun",
+    "email": "kesay59@gmail.com"
+  },
+  "main": "./dist/multiple-document-vue3.common.js",
+  "files": [
+    "dist/**",
+    "src/assets/**"
+  ],
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --name mdi src/main.js",
+    "build": "vue-cli-service build --target lib --name multiple-document-vue3 src/main.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "vue": "^3.2.0",
     "core-js": "^3.6.5",
-    "vue": "^3.0.0"
+    "interactjs": "^1.10.11"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

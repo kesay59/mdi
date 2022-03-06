@@ -1,7 +1,6 @@
 <template>
     <div style="width: 100%; height: 100%">
-        <!-- <component :is="DocumentList" @ready="handleReady"></component> -->
-        <document-list @ready="handleReady"></document-list>
+        <document-list @readyApi="handleReady"></document-list>
     </div>
 </template>
 <script>
@@ -11,16 +10,13 @@ export default {
     components: {
         DocumentList,
     },
-    emits: ['ready'],
+    emits: ['readyApi'],
     setup(props, { emit }) {
-        console.log('place : start');
         const handleReady = function (documentApi) {
-            console.log('place : ready');
-            emit('ready', documentApi);
+            emit('readyApi', documentApi);
         };
         return {
             handleReady,
-            DocumentList,
         };
     },
 };

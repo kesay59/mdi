@@ -1,10 +1,3 @@
-<template>
-    <div class="limit-rect">
-        <template v-for="(document, idx) in documentList" :key="idx">
-            <frame :document="document" :isTop="topIndex == idx" v-if="document != null" v-show="!document.iconize"></frame>
-        </template>
-    </div>
-</template>
 <script>
 import { ref, computed } from 'vue';
 
@@ -14,10 +7,8 @@ export default {
     components: {
         Frame,
     },
-    emits: ['ready'],
+    emits: ['readyApi'],
     setup(props, { emit }) {
-        console.log('list : start');
-
         function* generateOrder(start, end) {
             for (let i = start; i <= end; i++) yield i;
         }
@@ -57,9 +48,11 @@ export default {
                     return this[fixedContentsSymbol];
                 }
                 toggleMaximize() {
+                    this.increaseOrder();
                     this.maximize = !this.maximize;
                 }
                 toggleIconize() {
+                    this.increaseOrder();
                     this.iconize = !this.iconize;
                 }
                 close() {
@@ -175,8 +168,7 @@ export default {
             },
             list: documentList.value,
         };
-        console.log('list : ready');
-        emit('ready', documentApi);
+        emit('readyApi', documentApi);
         return {
             documentList,
             topIndex,
@@ -184,10 +176,11 @@ export default {
     },
 };
 </script>
-<style scoped>
-.limit-rect {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-</style>
+
+<template>
+    <div class="limit-rect" style="width: 100%; height: 100%; position: relative">
+        <template v-for="(document, idx) in documentList" :key="idx">
+            <frame :document="document" :isTop="topIndex == idx" v-if="document != null" v-show="!document.iconize"></frame>
+        </template>
+    </div>
+</template>

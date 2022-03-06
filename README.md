@@ -1,2 +1,3 @@
-# mdi
-MDI(multi document interface) libaray using Vue3
+# multiple document
+
+multiple document component libaray using Vue3

@@ -8,6 +8,9 @@
             top: position.top + 'px',
             left: position.left + 'px',
             zIndex: document.order,
+            backgroundColor: 'white',
+            position: 'absolute',
+            border: '1px solid black',
         }"
     >
         <toolbar :document="document" :isTop="isTop">
@@ -42,7 +45,7 @@ export default {
         const documentFrame = ref(null);
 
         onMounted(() => {
-            const dragController = interact(dragField);
+            const dragController = interact(dragField.value);
             dragController.draggable({
                 listeners: {
                     move(event) {
@@ -101,10 +104,3 @@ export default {
     },
 };
 </script>
-<style lang="css" scoped>
-.document-frame {
-    background-color: white;
-    position: absolute;
-    border: 1px solid black;
-}
-</style>
