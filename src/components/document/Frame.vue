@@ -5,8 +5,8 @@
         :style="{
             width: (document.maximize ? document.size.max.width : document.size.current.width) + 'px',
             height: (document.maximize ? document.size.max.height : document.size.current.height) + 'px',
-            top: position.top + 'px',
-            left: position.left + 'px',
+            top: document.position.top + 'px',
+            left: document.position.left + 'px',
             zIndex: document.order,
             backgroundColor: 'white',
             position: 'absolute',
@@ -39,7 +39,7 @@ export default {
         isTop: Boolean,
     },
     setup(props) {
-        const position = ref({ top: 0, left: 0 });
+        // const position = ref({ top: 0, left: 0 });
 
         const dragField = ref(null);
         const documentFrame = ref(null);
@@ -52,8 +52,9 @@ export default {
                         var dy = Math.round(event.dy);
                         var dx = Math.round(event.dx);
                         if (Math.abs(dy) > 0 || Math.abs(dx) > 0) {
-                            position.value.top = position.value.top + dy;
-                            position.value.left = position.value.left + dx;
+                            var position = props.document.position;
+                            position.top = position.top + dy;
+                            position.left = position.left + dx;
                         }
                     },
                 },
@@ -78,10 +79,11 @@ export default {
                     move(event) {
                         if (!props.document.maximize) {
                             var currentSize = props.document.size.current;
+                            var position = props.document.position;
                             currentSize.height = Math.round(event.rect.height);
                             currentSize.width = Math.round(event.rect.width);
-                            position.value.top += Math.round(event.deltaRect.top);
-                            position.value.left += Math.round(event.deltaRect.left);
+                            position.top += Math.round(event.deltaRect.top);
+                            position.left += Math.round(event.deltaRect.left);
                         }
                     },
                 },
@@ -97,7 +99,7 @@ export default {
             });
         });
         return {
-            position,
+            // position,
             dragField,
             documentFrame,
         };

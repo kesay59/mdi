@@ -4,6 +4,9 @@ import { ref, computed } from 'vue';
 import Frame from './Frame.vue';
 
 export default {
+    props: {
+        maximumNumber: Number,
+    },
     components: {
         Frame,
     },
@@ -19,13 +22,14 @@ export default {
             let contentsFnSymobl = Symbol('CONTENT_FN');
             let fixedContentsSymbol = Symbol('FIXED_CONTENTS');
             return class {
-                constructor(index, title, contentsFn, data, size, fixedContents) {
+                constructor(index, title, contentsFn, data, size, position, fixedContents) {
                     this[indexSymbol] = index;
                     this[orderSymbol] = orderGen.next().value;
                     this.title = title;
                     this[contentsFnSymobl] = contentsFn;
                     this.data = data;
                     this.size = size;
+                    this.position = position;
                     this[fixedContents] = true;
                     this.contents = null;
                     this.iconize = false;
@@ -61,7 +65,7 @@ export default {
             };
         })();
 
-        const DOCUMENT_MAXIMUM_NUMBER = 12;
+        const DOCUMENT_MAXIMUM_NUMBER = !props.maximumNumber || props.maximumNumber <= 0 ? 12 : props.maximumNumber;
         const documentList = ref(new Array(DOCUMENT_MAXIMUM_NUMBER));
         documentList.value.fill(null);
 
@@ -107,6 +111,15 @@ export default {
 
             return size;
         };
+        const validatePosition = function (position) {
+            if (position == null) return { top: 0, left: 0 };
+            else if (typeof position != 'object') throw "The type of 'position' must be object.";
+            position = {
+                top: position.top != null ? position.top : 0,
+                left: position.left != null ? position.left : 0,
+            };
+            return position;
+        };
         const validateFixedContents = function (fixedContents) {
             if (fixedContents) fixedContents = false;
             if (typeof fixedContents != 'boolean') throw "The type of 'fixedContents' must be boolean";
@@ -118,6 +131,7 @@ export default {
          * @param {function(promise)} contentsFn
          * @param {object} data
          * @param {object} size
+         * @param {object} position
          * @param {boolean} fixedContents
          * @return {class(Document)}
          * @code openDocument({
@@ -125,6 +139,7 @@ export default {
          *           contentsFn : import("src/Example.vue"),
          *           data : {},
          *           size : {current: {width: 300, height: 300}, min: {width: 100, height: 100}, max: {width: 500, height: 500}},
+         *           position : {top : 0, left: 0}
          *           fixedContents : true
          *       })
          */
@@ -138,7 +153,15 @@ export default {
                     if (documentList.value[targetIndex].order > documentList.value[idx].order) targetIndex = idx;
                 }
             }
-            const document = new Document(targetIndex, validateTitle(params.title), validateContentsFn(params.contentsFn), validateData(params.data), validateSize(params.size), validateFixedContents(params.fixedContents));
+            const document = new Document(
+                targetIndex,
+                validateTitle(params.title),
+                validateContentsFn(params.contentsFn),
+                validateData(params.data),
+                validateSize(params.size),
+                validatePosition(params.position),
+                validateFixedContents(params.fixedContents)
+            );
             documentList.value[targetIndex] = document;
             return document;
         };

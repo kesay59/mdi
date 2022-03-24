@@ -15,7 +15,7 @@ npm : https://www.npmjs.com/package/multiple-document-vue3
 ```
 <template>
   <div style="width:800px; height:600px;>
-    <mulitple-document @readyApi="handleReady"></mulitple-document>
+    <mulitple-document @readyApi="handleReady" :maximumNumber="maximumNumber"></mulitple-document>
   </div>
 </template>
 
@@ -23,6 +23,9 @@ npm : https://www.npmjs.com/package/multiple-document-vue3
 import { ref } from 'vue';
 import MultipleDocument from 'multiple-document-vue3';
 
+// the maximum number of windows that can be opened
+const maximumNumber = 4;
+// API for operating components
 const documentApi = ref(null);
 const handleReady = function (api) {
     documentApi.value = api;
