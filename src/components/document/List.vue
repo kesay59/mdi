@@ -1,3 +1,15 @@
+<template>
+    <div class="limit-rect" style="width: 100%; height: 100%; position: relative">
+        <template v-for="(document, idx) in documentList" :key="idx">
+            <frame :document="document" :isTop="topIndex == idx" v-if="document != null" v-show="!document.iconize">
+                <template #toolbar v-if="usingToolbarSlot">
+                    <slot name="toolbar"></slot>
+                </template>
+            </frame>
+        </template>
+    </div>
+</template>
+
 <script>
 import { ref, computed } from 'vue';
 
@@ -11,7 +23,8 @@ export default {
         Frame,
     },
     emits: ['readyApi'],
-    setup(props, { emit }) {
+    setup(props, { emit, slots }) {
+        // console.log(slots);
         function* generateOrder(start, end) {
             for (let i = start; i <= end; i++) yield i;
         }
@@ -195,15 +208,9 @@ export default {
         return {
             documentList,
             topIndex,
+
+            usingToolbarSlot: slots.toolbar != null,
         };
     },
 };
 </script>
-
-<template>
-    <div class="limit-rect" style="width: 100%; height: 100%; position: relative">
-        <template v-for="(document, idx) in documentList" :key="idx">
-            <frame :document="document" :isTop="topIndex == idx" v-if="document != null" v-show="!document.iconize"></frame>
-        </template>
-    </div>
-</template>

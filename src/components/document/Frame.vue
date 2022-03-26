@@ -13,9 +13,12 @@
             border: '1px solid black',
         }"
     >
-        <toolbar :document="document" :isTop="isTop">
-            <div ref="dragField" style="position: absolute; top: 4px; left: 4px; height: calc(100% - 4px); width: calc(100% - 4px)" @dblclick="document.toggleMaximize()"></div>
-        </toolbar>
+        <slot name="toolbar">
+            <toolbar :document="document" :isTop="isTop">
+                <div ref="dragField" style="position: absolute; top: 4px; left: 4px; height: calc(100% - 4px); width: calc(100% - 4px)" @dblclick="document.toggleMaximize()"></div>
+            </toolbar>
+        </slot>
+        <!-- TODO: slot 높이 조절 추가 -->
         <div style="width: 100%; height: calc(100% - 24px)" @mousedown="document.increaseOrder()">
             <Inside :document="document"></Inside>
         </div>
@@ -38,7 +41,7 @@ export default {
         document: Object,
         isTop: Boolean,
     },
-    setup(props) {
+    setup(props, { slots }) {
         // const position = ref({ top: 0, left: 0 });
 
         const dragField = ref(null);

@@ -1,6 +1,10 @@
 <template>
     <div style="width: 100%; height: 100%">
-        <document-list @readyApi="handleReady" :maximumNumber="maximumNumber"></document-list>
+        <document-list @readyApi="handleReady" :maximumNumber="maximumNumber">
+            <template #toolbar v-if="usingToolbarSlot">
+                <slot name="toolbar"></slot>
+            </template>
+        </document-list>
     </div>
 </template>
 <script>
@@ -14,12 +18,14 @@ export default {
         DocumentList,
     },
     emits: ['readyApi'],
-    setup(props, { emit }) {
+    setup(props, { emit, slots }) {
         const handleReady = function (documentApi) {
             emit('readyApi', documentApi);
         };
         return {
             handleReady,
+
+            usingToolbarSlot: slots.toolbar != null,
         };
     },
 };
