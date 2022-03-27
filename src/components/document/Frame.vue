@@ -18,7 +18,7 @@
                 <div ref="dragField" style="position: absolute; top: 4px; left: 4px; height: calc(100% - 4px); width: calc(100% - 4px)" @dblclick="document.toggleMaximize()"></div>
             </toolbar>
         </slot>
-        <!-- TODO: slot 높이 조절 추가 -->
+        <!-- TODO: slot 높이 조절 추가, drag에 사용한 div 문제, document 올리는 문제 -->
         <div style="width: 100%; height: calc(100% - 24px)" @mousedown="document.increaseOrder()">
             <Inside :document="document"></Inside>
         </div>
